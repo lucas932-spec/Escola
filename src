@@ -1,0 +1,117 @@
+CREATE DATABASE Escolaa;
+
+
+USE Escolaa;
+
+CREATE TABLE estudantes (
+    id_estudante INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    data_nascimento DATE NOT NULL,
+    turma_id INT
+);
+
+
+CREATE TABLE professores (
+    id_professor INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    disciplina VARCHAR(100) NOT NULL
+);
+
+
+CREATE TABLE turmas (
+    id_turma INT AUTO_INCREMENT PRIMARY KEY,
+    nome_turma VARCHAR(100) NOT NULL,
+    id_professor INT,
+    FOREIGN KEY (id_professor) REFERENCES professores(id_professor)
+);
+
+
+CREATE TABLE notas (
+    id_nota INT AUTO_INCREMENT PRIMARY KEY,
+    id_estudante INT,
+    id_turma INT,
+    nota DECIMAL(5, 2),
+    FOREIGN KEY (id_estudante) REFERENCES estudantes(id_estudante),
+    FOREIGN KEY (id_turma) REFERENCES turmas(id_turma)
+);
+
+-- Inserir dados fictícios para professores
+INSERT INTO professores (nome, disciplina) VALUES
+('Ana Silva', 'Matemática'),
+('Carlos Souza', 'História'),
+('Mariana Oliveira', 'Ciências'),
+('João Pereira', 'Geografia'),
+('Fernanda Costa', 'Português'),
+('Lucas Andrade', 'Inglês');
+
+
+INSERT INTO turmas (nome_turma, id_professor) VALUES
+('Turma A', 1),
+('Turma B', 2),
+('Turma C', 3),
+('Turma D', 4);
+
+
+INSERT INTO estudantes (nome, data_nascimento, turma_id) VALUES
+('Pedro Santos', '2010-05-15', 1),
+('Maria Lima', '2009-08-21', 1),
+('João Almeida', '2010-01-10', 1),
+('Ana Paula', '2009-12-30', 2),
+('Lucas Martins', '2010-03-05', 2),
+('Clara Souza', '2009-09-12', 2),
+('Bruno Fernandes', '2010-07-07', 3),
+('Larissa Ferreira', '2010-11-15', 3),
+('Gabriel Santos', '2010-06-20', 3),
+('Isabela Costa', '2009-10-10', 4),
+('Rafael Silva', '2010-02-18', 4),
+('Daniela Vieira', '2010-08-03', 4),
+('Victor Oliveira', '2009-05-30', 4),
+('Renata Rocha', '2009-11-22', 2),
+('Felipe Carvalho', '2010-04-25', 3);
+
+
+INSERT INTO notas (id_estudante, id_turma, nota) VALUES
+(1, 1, 8.5), (2, 1, 7.0), (3, 1, 9.0),
+(4, 2, 6.5), (5, 2, 8.0), (6, 2, 7.5), (13, 2, 5.5),
+(7, 3, 8.0), (8, 3, 7.0), (9, 3, 8.5), (15, 3, 9.5),
+(10, 4, 7.5), (11, 4, 6.0), (12, 4, 8.0), (14, 4, 6.5);
+
+
+
+SELECT 
+    t.nome_turma,
+    e.nome AS nome_estudante,
+    n.nota
+FROM 
+    notas n
+JOIN 
+    estudantes e ON n.id_estudante = e.id_estudante
+JOIN 
+    turmas t ON n.id_turma = t.id_turma
+ORDER BY 
+    t.nome_turma, e.nome;
+
+
+SELECT 
+    t.nome_turma,
+    p.nome AS professor_responsavel,
+    p.disciplina
+FROM 
+    turmas t
+JOIN 
+    professores p ON t.id_professor = p.id_professor
+ORDER BY 
+    t.nome_turma;
+
+
+SELECT 
+    t.nome_turma,
+    AVG(n.nota) AS media_notas
+FROM 
+    notas n
+JOIN 
+    turmas t ON n.id_turma = t.id_turma
+GROUP BY 
+    t.nome_turma
+ORDER BY 
+    t.nome_turma;
